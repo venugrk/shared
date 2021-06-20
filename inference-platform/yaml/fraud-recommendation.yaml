@@ -18,24 +18,32 @@ paths:
     post:
       tags:
         - recommend
-      summary: 'Predict if transaction is genuine or fraudalentm, the score is lesser than defined threshold than the transaction can be termed as fradulanet. '
+      summary: 'Predict if transaction is genuine or fraudalent, the score is lesser than defined threshold than the transaction can be termed as fradulanet. '
       description: 'Predict if transaction is genuine or fraudalentm, the score is lesser than defined threshold than the transaction can be termed as fradulanet. If the score is greater than .90 than the transaction can be recommended as genuine'
       operationId: predict
       responses:
         '200':
          description: Request was successfuly processed 
          content:
+            application/x-protobuf:
+             schema:
+              $ref: '#/components/schemas/result'
             application/json:
              schema:
               $ref: '#/components/schemas/result'
+            
         '405':
           description: Invalid input value 
           content:
+            application/x-protobuf:
+             schema:
+              $ref: '#/components/schemas/error'    
             application/json:
              schema:
               $ref: '#/components/schemas/error'
+            
       requestBody:
-        $ref: '#/components/requestBodies/TxContext'
+        $ref: '#/components/requestBodies/Message'
       parameters: []
 externalDocs:
   description: See AsyncAPI example
@@ -48,7 +56,13 @@ components:
       properties:
         id:
           type: string
-          description : transaction identifier 
+          description : transaction,request payload identifier 
+        modelname:
+          type : string
+          description: Name of the model   
+        modelversion:
+          type : string
+          description: Version of the model 
         score:
           type : number
           description: accuracy or confidence score as defined by the model
@@ -58,61 +72,71 @@ components:
       properties:
         id:
           type: string
-          description : transaction identifier 
+          description : transaction,payload identifier 
         error:
           type : string
           description: Error,exception that occurred during prediction for a given transaction identifer
+        modelname:
+          type : string
+          description: Name of the model   
+        modelversion:
+          type : string
+          description: Version of the model   
         code:
           type: integer
           description: Error code 
-    TransactionContext:
+    Payload:
       type: object
-      description: information,features required to predict the transaction is fradualent of genuine
+      description: information/data required to predict the transaction is fradualent of genuine
       properties:
         id:
           type: string
-          description : transaction identifier
-        amount:
-          type: string
-          description: transaction value or range ( 1000 USD - 2000USD)
+          description : transaction/payload identifier
         features:
-          $ref: '#/components/schemas/ArrayOfFeature'
-    Feature:
+          $ref: '#/components/schemas/ArrayOfPayloadData'
+    PayloadData:
       properties:
         name:
           type: string
-          description: feature key
+          description:  payload,feature key
         value:
           type: string
-          description: feature value
-    ArrayOfFeature:
+          description: payload,feature value
+    ArrayOfPayloadData:
       type: array
       items: 
         type: object
         properties:
          name:
           type: string
-          description: feature key
+          description: payload,feature key
          value:
           type: string
-          description: feature value
+          description: payload,feature value
  
   requestBodies:
-    TxContext:
+    Message:
       content:
+        application/x-protobuf:
+          schema:
+            $ref: '#/components/schemas/Payload'
         application/json:
           schema:
-            $ref: '#/components/schemas/TransactionContext'
-      description: Transaction request
+            $ref: '#/components/schemas/Payload'
+      description: Payload for Transaction request
       required: true
-    TxArray:
+    MessageArray:
       content:
         application/json:
+         schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Payload'
+        application/x-protobuf:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/TransactionContext'
-      description: List of transaction object
+              $ref: '#/components/schemas/Payload'
+      description: List of Payload for for transaction object
       required: true
 security: []
-
