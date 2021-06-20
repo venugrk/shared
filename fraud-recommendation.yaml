@@ -1,0 +1,118 @@
+openapi: 3.0.0
+servers:
+  - url: 'https://virtserver.swaggerhub.com/venugr/FraudPrediction/1.0.0'
+info:
+  description: 'API to detect if given transaction by a user is fraudulent or genuine '
+  version: 1.0.0
+  title: Fraud Prediction API for Credit Card Transaction
+  contact:
+    email: venugr.k@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: CustomerProtection Service 
+    description:  CustomerProtection Service by predicting if credit card is misused
+paths:
+  /predict:
+    post:
+      tags:
+        - recommend
+      summary: 'Predict if transaction is genuine or fraudalentm, the score is lesser than defined threshold than the transaction can be termed as fradulanet. '
+      description: 'Predict if transaction is genuine or fraudalentm, the score is lesser than defined threshold than the transaction can be termed as fradulanet. If the score is greater than .90 than the transaction can be recommended as genuine'
+      operationId: predict
+      responses:
+        '200':
+         description: Request was successfuly processed 
+         content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/result'
+        '405':
+          description: Invalid input value 
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/error'
+      requestBody:
+        $ref: '#/components/requestBodies/TxContext'
+      parameters: []
+externalDocs:
+  description: See AsyncAPI example
+  url: 'https://mermade.github.io/shins/asyncapi.html'
+components:
+  schemas:
+    result:
+      description: Result of the prediction for a given transaction identifer
+      type: object
+      properties:
+        id:
+          type: string
+          description : transaction identifier 
+        score:
+          type : number
+          description: accuracy or confidence score as defined by the model
+    error:
+      description: Error,exception that occurred during prediction for a given transaction identifer
+      type: object
+      properties:
+        id:
+          type: string
+          description : transaction identifier 
+        error:
+          type : string
+          description: Error,exception that occurred during prediction for a given transaction identifer
+        code:
+          type: integer
+          description: Error code 
+    TransactionContext:
+      type: object
+      description: information,features required to predict the transaction is fradualent of genuine
+      properties:
+        id:
+          type: string
+          description : transaction identifier
+        amount:
+          type: string
+          description: transaction value or range ( 1000 USD - 2000USD)
+        features:
+          $ref: '#/components/schemas/ArrayOfFeature'
+    Feature:
+      properties:
+        name:
+          type: string
+          description: feature key
+        value:
+          type: string
+          description: feature value
+    ArrayOfFeature:
+      type: array
+      items: 
+        type: object
+        properties:
+         name:
+          type: string
+          description: feature key
+         value:
+          type: string
+          description: feature value
+ 
+  requestBodies:
+    TxContext:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TransactionContext'
+      description: Transaction request
+      required: true
+    TxArray:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/TransactionContext'
+      description: List of transaction object
+      required: true
+security: []
+
