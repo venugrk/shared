@@ -25,7 +25,8 @@ public class UBTreeTest {
 	Logger logger = Logger.getLogger(UBTreeTest.class.getName());
 
 	/**
-	 * Rigorous Test :-)
+	 * Build a binary tree serialize and de-serialize using plain object
+	 * serialization
 	 * 
 	 * @throws IOException
 	 * @throws FileNotFoundException
@@ -57,14 +58,16 @@ public class UBTreeTest {
 			String builtTree = memtree.toString();
 			System.out.println("Tree is " + builtTree);
 
+			// serailized tree
 			ObjectOutputStream fis = new ObjectOutputStream(
 					new FileOutputStream(new File("/tmp/compareTreeTestObjectStream.dat")));
 			memtree.write(fis);
 			fis.close();
 
+			// de-serialize the serailized tree
+
 			ObjectInputStream ois = new ObjectInputStream(
 					new FileInputStream(new File("/tmp/compareTreeTestObjectStream.dat")));
-			// Node newnode = (Node) ois.readObject();
 
 			BinaryTree rtree = new BinaryTree();
 			rtree.build(ois);
@@ -82,6 +85,9 @@ public class UBTreeTest {
 
 	}
 
+	/**
+	 * Build a binary tree serialize and de-serialize using depth traversal
+	 */
 	@Test
 	public void compareTestObjectTree() {
 		try {
@@ -133,6 +139,9 @@ public class UBTreeTest {
 
 	}
 
+	/**
+	 * Negative test where serialize one tree and read another and compare
+	 */
 	@Test
 	public void compareTestObjectTreeNegative() {
 		try {

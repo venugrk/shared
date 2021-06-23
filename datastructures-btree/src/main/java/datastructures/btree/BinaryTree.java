@@ -75,10 +75,23 @@ public class BinaryTree {
 		return;
 	}
 
+	/**
+	 * Build tree using depth traversal
+	 * 
+	 * @param ois
+	 * @throws IOException
+	 */
+
 	public void buildObectTree(ObjectInputStream ois) throws IOException {
 		rootNode = buildOTree(ois);
 	}
 
+	/**
+	 * Serialize tree using depth traversal
+	 * 
+	 * @param oos
+	 * @throws IOException
+	 */
 	public void writeObjectTree(ObjectOutputStream oos) throws IOException {
 		writeOTree(rootNode, oos);
 	}
