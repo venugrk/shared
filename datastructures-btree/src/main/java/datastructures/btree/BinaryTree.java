@@ -75,6 +75,39 @@ public class BinaryTree {
 		return;
 	}
 
+	public void buildObectTree(ObjectInputStream ois) throws IOException {
+		rootNode = buildOTree(ois);
+	}
+
+	public void writeObjectTree(ObjectOutputStream oos) throws IOException {
+		writeOTree(rootNode, oos);
+	}
+
+	private void writeOTree(Node node, ObjectOutputStream oos) throws IOException {
+
+		if (node == null) {
+			oos.writeInt(MARKER);
+			return;
+		}
+
+		oos.writeInt(node.getData());
+		writeOTree(node.getLeftNode(), oos);
+		writeOTree(node.getRightNode(), oos);
+	}
+
+	private Node buildOTree(ObjectInputStream ois) throws IOException {
+
+		int data = ois.readInt();
+		if (data == MARKER) {
+			return null;
+		}
+		Node n = new Node(data);
+		n.setLeftNode(buildOTree(ois));
+		n.setRightNode(buildOTree(ois));
+		return n;
+
+	}
+
 	private Node buildTree(ArrayDeque<Integer> queue) throws IOException {
 
 		int data = queue.pop();
